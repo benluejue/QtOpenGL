@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/FirstBigProject">
+        <file>shader/colors.frag</file>
+        <file>shader/colors.vert</file>
+        <file>img/CloverIcon.png</file>
+    </qresource>
+    <qresource prefix="/image">
+        <file>texture/container2.png</file>
+        <file>texture/container2_specular.png</file>
+    </qresource>
+</RCC>
