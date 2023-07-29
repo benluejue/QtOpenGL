@@ -8,4 +8,8 @@
         <file>texture/container2.png</file>
         <file>texture/container2_specular.png</file>
     </qresource>
+    <qresource prefix="/shader">
+        <file>shader/camera_cube.frag</file>
+        <file>shader/camera_cube.vert</file>
+    </qresource>
 </RCC>

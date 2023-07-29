@@ -22,8 +22,21 @@ public:
 	void render(GLboolean isTexture = GL_FALSE, GLboolean isNormal = GL_FALSE) const;
 private:
 	float _vertices[1000];
-	GLuint VBO;
+	GLuint VAO,VBO;
 };
+
+// plane
+class Plane {
+public:
+	Plane();
+	~Plane();
+	void init();
+	void render(GLboolean isTexture = GL_FALSE, GLboolean isNormal = GL_FALSE);
+private:
+	GLuint VBO, VAO;
+};
+
+
 
 class basic_shapes {
 	// ... other class members

@@ -102,6 +102,7 @@
     <ClCompile Include="ray.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="shader2.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="texture2d.cpp" />
     <ClCompile Include="vao.cpp" />
@@ -127,8 +128,10 @@
     <ClInclude Include="pubilc.hpp" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="ray2.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="shader2.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="texture2d.h" />
     <ClInclude Include="utils.h" />
@@ -141,8 +144,13 @@
     <None Include="boundary_shader.vert" />
     <None Include="plane.frag" />
     <None Include="plane.vert" />
+    <None Include="shader\camera_cube.frag" />
+    <None Include="shader\camera_cube.vert" />
     <None Include="shader\cube.frag" />
     <None Include="shader\cube.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FirstBigProject.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

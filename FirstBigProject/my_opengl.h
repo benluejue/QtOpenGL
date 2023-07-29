@@ -72,17 +72,17 @@ signals:
 	void zRotationChanged(int angle);
 // 几个基础形状
 public:
+	Cube* cmaera_cube;
+	Plane* plane;
 	Cube* cube;
 
 private:
 	GLuint VAO, VBO;
-	GLuint planeVAO, planeVBO;
 	QOpenGLShaderProgram program;
 
 
 
 	Shader* LightShader;
-	Shader* planeShader;
 	Shader* boundaryShader;
 
 
@@ -142,17 +142,7 @@ private:
 	float m_constant = 1.0;
 	float m_linear = 0.09f;
 	float m_quadratic = 0.032f;
-	float planeVertices[30] = {
-		// positions          // texture Coords 
-		// (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
-		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-		-5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-
-		 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-		-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-		 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
-	};
+	
 };
 
 #endif
