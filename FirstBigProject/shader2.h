@@ -21,7 +21,6 @@ public:
         return *this;
     }
 
-    //还是把设置着色器uniform变量操作写成Shader里的inline成员函数管理，真的方便很多。
     void setFloat(const QString& name, const GLfloat& value) {
         GLuint loc = shaderProgram->uniformLocation(name);
         shaderProgram->setUniformValue(loc, value);

@@ -26,6 +26,11 @@
 #include "boundary.h"
 #include "ResourceManager.h"
 #include "basic_shapes.h"
+#include "skybox.h"
+#include "model.h"
+#include "shader2.h"
+
+
 
 
 class my_opengl : public QOpenGLWidget, protected QOpenGLFunctions
@@ -52,6 +57,7 @@ public:
 	void processInput(GLfloat dt);				// 键盘控制 好处是这种方式可以实现连续控制
 	void keyPressEvent(QKeyEvent* event);   //键盘按下事件
 	void keyReleaseEvent(QKeyEvent* event);  //键盘释放事件
+	Model ourModel;
 
 public slots:
 	void setXRotation(int angle);
@@ -72,9 +78,13 @@ signals:
 	void zRotationChanged(int angle);
 // 几个基础形状
 public:
-	Cube* cmaera_cube;
-	Plane* plane;
-	Cube* cube;
+	std::vector<basic_shapes*>shapes;
+	
+	basic_shapes* cmaera_cube;
+	basic_shapes* plane;
+	basic_shapes* cube;
+	SkyBox* skybox;
+	Shader* ourModelShader;
 
 private:
 	GLuint VAO, VBO;

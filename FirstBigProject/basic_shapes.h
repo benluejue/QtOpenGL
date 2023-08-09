@@ -3,6 +3,13 @@
 #include <QVector3D>
 #include "utils.h"
 #include "vao.h"
+// 几个基本形状的基类
+class basic_shapes {
+public:
+	virtual void init() = 0;
+	virtual void render(GLboolean isTexture = GL_FALSE, GLboolean isNormal = GL_FALSE) const = 0;
+	bool is_chosed;
+};
 
 
 /*
@@ -10,34 +17,29 @@
 * 如立方体,平面
 */
 /*************立方体**********/
-class Cube {
+class Cube:public basic_shapes {
 public:
 	// 默认绘制一个1x1x1的立方体
 	Cube();
 	Cube(float vertices[]);
-	void init();
-	// vao(vbo, ebo) vbo std::vector<Vertex> vertices; ebo std::vector<unsigned int> indices;
+	virtual void init() override;
 	
 	~Cube();
-	void render(GLboolean isTexture = GL_FALSE, GLboolean isNormal = GL_FALSE) const;
+	virtual void render(GLboolean isTexture = GL_FALSE, GLboolean isNormal = GL_FALSE) const override;
 private:
 	float _vertices[1000];
 	GLuint VAO,VBO;
 };
 
 // plane
-class Plane {
+class Plane :public basic_shapes {
 public:
 	Plane();
 	~Plane();
-	void init();
-	void render(GLboolean isTexture = GL_FALSE, GLboolean isNormal = GL_FALSE);
+	virtual void init() override;
+	virtual void render(GLboolean isTexture = GL_FALSE, GLboolean isNormal = GL_FALSE) const override;
 private:
 	GLuint VBO, VAO;
 };
 
 
-
-class basic_shapes {
-	// ... other class members
-};

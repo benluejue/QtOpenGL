@@ -91,6 +91,15 @@
     <ClCompile Include="shader2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="my_opengl.h">
@@ -161,6 +170,15 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\cube.frag">
@@ -185,6 +203,24 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="shader\camera_cube.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shader\colors.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shader\colors.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shader\skybox.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shader\skybox.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shader\our_model.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shader\our_model.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

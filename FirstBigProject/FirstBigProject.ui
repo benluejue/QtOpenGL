@@ -19,6 +19,15 @@
   <property name="windowTitle">
    <string>FirstBigProject</string>
   </property>
+  <property name="iconSize">
+   <size>
+    <width>24</width>
+    <height>24</height>
+   </size>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonTextUnderIcon</enum>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
@@ -361,8 +370,28 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionCbue"/>
+   <addaction name="actionplane"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionCbue">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/cube.png</normaloff>img/cube.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cbue</string>
+   </property>
+  </action>
+  <action name="actionplane">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/plane.png</normaloff>img/plane.png</iconset>
+   </property>
+   <property name="text">
+    <string>plane</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

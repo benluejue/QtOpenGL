@@ -6,6 +6,7 @@
 #include <QOpenGLShaderProgram>
 #include <QString>
 
+
 class Shader {
 public:
 	Shader(const QString& vertexSourcePath, const QString& fragmentSourcePath);

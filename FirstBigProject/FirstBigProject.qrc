@@ -7,9 +7,14 @@
     <qresource prefix="/image">
         <file>texture/container2.png</file>
         <file>texture/container2_specular.png</file>
+        <file>img/Camera.png</file>
     </qresource>
     <qresource prefix="/shader">
         <file>shader/camera_cube.frag</file>
         <file>shader/camera_cube.vert</file>
+        <file>shader/skybox.frag</file>
+        <file>shader/skybox.vert</file>
+        <file>shader/our_model.frag</file>
+        <file>shader/our_model.vert</file>
     </qresource>
 </RCC>

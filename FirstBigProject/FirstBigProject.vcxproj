@@ -62,7 +62,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>D:\OpenGL\OpenGL\libs\GLFW\glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>D:\OpenGL\OpenGL\libs\GLFW\glfw3.lib;D:\OpenGL\OpenGL\libs\ASSIMP\assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -96,6 +96,8 @@
     <ClCompile Include="ebo.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="mainCameraOpenGL.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="my_opengl.cpp" />
     <ClCompile Include="opnegl_res_control.cpp" />
     <ClCompile Include="public.cpp" />
@@ -103,6 +105,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="shader2.cpp" />
+    <ClCompile Include="skybox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="texture2d.cpp" />
     <ClCompile Include="vao.cpp" />
@@ -124,6 +127,8 @@
     <ClInclude Include="ebo.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="mainCameraOpenGL.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="opnegl_res_control.h" />
     <ClInclude Include="pubilc.hpp" />
     <ClInclude Include="ray.h" />
@@ -132,6 +137,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="shader2.h" />
+    <ClInclude Include="skybox.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="texture2d.h" />
     <ClInclude Include="utils.h" />
@@ -146,8 +152,14 @@
     <None Include="plane.vert" />
     <None Include="shader\camera_cube.frag" />
     <None Include="shader\camera_cube.vert" />
+    <None Include="shader\colors.frag" />
+    <None Include="shader\colors.vert" />
     <None Include="shader\cube.frag" />
     <None Include="shader\cube.vert" />
+    <None Include="shader\our_model.frag" />
+    <None Include="shader\our_model.vert" />
+    <None Include="shader\skybox.frag" />
+    <None Include="shader\skybox.vert" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FirstBigProject.rc" />

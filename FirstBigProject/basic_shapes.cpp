@@ -2,6 +2,9 @@
 #include "utils.h"
 
 
+
+
+
 Cube::Cube():VBO(0), VAO(0)
 {
     
@@ -136,7 +139,7 @@ void Plane::init() {
 
 }
 
-void Plane::render(GLboolean isTexture, GLboolean isNormal) {
+void Plane::render(GLboolean isTexture, GLboolean isNormal) const{
     OPENGL_FUNCTIONS->glBindBuffer(GL_ARRAY_BUFFER, VBO);
     OPENGL_EXTRA_FUNCTIONS->glBindVertexArray(VAO);
 
