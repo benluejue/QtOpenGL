@@ -16,9 +16,7 @@ my_opengl::my_opengl(QWidget* parent)
 
     projection.setToIdentity();
     m_model.setToIdentity();
-    shapes.push_back(cube);
-    shapes.push_back(plane);
-    shapes.push_back(cmaera_cube);
+
     
 }
 
@@ -27,6 +25,49 @@ my_opengl::~my_opengl()
     //delete planeShader;
     delete boundaryShader;
     
+}
+
+GraphicsRenderer* my_opengl::hitTest(const Ray& ray) {
+    CollisionRecorder newRecord = CollisionRecorder();
+    GraphicsRenderer* newObject = nullptr;
+    // Object hit test
+    for (int i = 0; i < _shapes.size(); i++) {
+        qDebug() << "-----------------------------------------";
+        Logger::debug("Testing object " + std::to_string(i));
+        GraphicsRenderer* obj = _shapes[i];
+        // 后续补上_operatingObject为在操作的物体
+        //if (obj == _operatingObject) {
+        //    // Ignore current operating Object
+        //    continue;
+        //}
+        CollisionRecorder hitRecord = obj->hit(ray);
+        if (hitRecord.hitted()) {
+            Logger::debug("Hitted object " + std::to_string(i));
+        }
+        else {
+            Logger::debug("Missed object " + std::to_string(i));
+        }
+        if (hitRecord.hitted() && hitRecord.t() < newRecord.t()) {
+            newRecord = hitRecord;
+            newObject = obj;
+        }
+    }
+    // Terrain hit test
+   /* if (_terrain != nullptr) {
+        HitRecord hitRecord = _terrain->hit(ray);
+        if (hitRecord.hitted()) {
+            Logger::debug("Hitted terrain");
+        }
+        else {
+            Logger::debug("Missed terrain");
+        }
+        if (hitRecord.hitted() && hitRecord.t() < newRecord.t()) {
+            newRecord = hitRecord;
+            newObject = nullptr;
+        }
+    }*/
+    _hitRecord = newRecord;
+    return newObject;
 }
 
 
@@ -50,59 +91,14 @@ void my_opengl::initializeGL()
     camera = new Camera(QVector3D(0.0f, 0.0f, 3.0f));
   
 
-    /**cube**/
-    cube = new Cube;
-    cube->init();
-    /****载入shader*/
-    ResourceManager::loadShader("cube", "./shader/colors.vert", "./shader/colors.frag");
-    /************ 载入Texture ***********/
-    ResourceManager::loadTexture("container2", container2);
-    ResourceManager::loadTexture("specular", specular);
-    /***********  cube shader参数 **************/
-    QMatrix4x4 model;
-    ResourceManager::getShader("cube").use().setMatrix4f("model", model);
-    ResourceManager::getShader("cube").use().setInteger("material.diffuse", 0);
-    ResourceManager::getShader("cube").use().setInteger("material.specular", 1);
-
-
-
-    OPENGL_EXTRA_FUNCTIONS->glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-
-    /*******************
-     ******模块化plane****
-    ********************/
-    plane = new Plane;
-    plane->init();
-    /*******载入shader*********/
-    ResourceManager::loadShader("plane", "./plane.vert", "./plane.frag");
-    /*******载入Texture********/
-    ResourceManager::loadTexture("metal", metal_path2);
-    /*******配置***************/
-    model.setToIdentity();
-    ResourceManager::getShader("plane").use().setMatrix4f("model", model);
-    ResourceManager::getShader("plane").use().setInteger("plane_texture", 0);
-
-    // 绑定空缓冲区 作为结尾 将当前的VAO,VBO与OpenGL上下文分离。
-    OPENGL_EXTRA_FUNCTIONS->glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    plane_model = Model("D:/OpenGL/OpenGL/resources/plane/plane.obj");
+    plane_shader = new Shader("./plane.vert", "./plane.frag");
 
 
     /**** 渲染一个摄像机正方体******/
-    cmaera_cube = new Cube();
-    cmaera_cube->init();
-    /*载入shader*/
-    ResourceManager::loadShader("cmaera_cube", ":/shader/shader/camera_cube.vert", ":/shader/shader/camera_cube.frag");
-    /************ 载入Texture ***********/
-    ResourceManager::loadTexture("brickwall", ":/image/img/Camera.png");
-    /***********  cube shader参数 **************/
-    ResourceManager::getShader("cmaera_cube").use().setMatrix4f("model", model);
-    // 3是表示3号纹理
-    ResourceManager::getShader("cmaera_cube").use().setInteger("texture1", 0);
-    OPENGL_EXTRA_FUNCTIONS->glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    camera_cube_model = Model("D:/OpenGL/OpenGL/resources/camera_cube/camera_cube.obj");
+    camera_cube_shader = new Shader(":/shader/shader/camera_cube.vert", ":/shader/shader/camera_cube.frag");
+
 
     /**天空盒*/
     skybox = new SkyBox;
@@ -112,13 +108,24 @@ void my_opengl::initializeGL()
     /******尝试增加模型**********/ 
     // D:/OpenGL/OpenGL/resources/99-intergalactic_spaceship-obj/Intergalactic_Spaceship-(Wavefront).obj
     //  "D:/OpenGL/VSOpenGL/FirstBigProject/FirstBigProject/3Dmodel/nanosuit/nanosuit.obj"
-    std::string path = "D:/OpenGL/VSOpenGL/FirstBigProject/FirstBigProject/3Dmodel/nanosuit/nanosuit.obj";
+    // D:/OpenGL/OpenGL/resources/LightBulb1/LightBulbOBJ.obj
+    // D:/OpenGL/OpenGL/resources/planet/planet_Quom1200.png
+    // D:/OpenGL/OpenGL/resources/rock/rock.obj
+    // D:/OpenGL/OpenGL/resources/cube/cube.obj
+    // D:/OpenGL/OpenGL/resources/11-obj/.OBJ/Room #1.obj
+    std::string path = "D:/OpenGL/OpenGL/resources/cube/base_cube.obj";
     ourModel = Model(path);
     /*载入shader*/
     QString vert_str = ":/shader/shader/our_model.vert";
     QString frag_str = ":/shader/shader/our_model.frag";
     ourModelShader = new Shader(vert_str, frag_str);
-    //ResourceManager::loadShader("ourModel", ":/shader/shader/our_model.vert", ":/shader/shader/our_model.frag");
+
+
+    cube_model = Model("D:/OpenGL/VSOpenGL/FirstBigProject/FirstBigProject/3Dmodel/nanosuit/nanosuit.obj");
+    cube_shader = new Shader("./shader/colors.vert", "./shader/colors.frag");
+
+    // 添加新物体
+    _objects = new GraphicsRenderer(&cube_model);
 
 
 }
@@ -148,39 +155,42 @@ void my_opengl::paintGL()
     this->projection.setToIdentity();
     this->projection.perspective(camera->zoom, (GLfloat)width() / (GLfloat)height(), 0.1f, 100.f);
    
-    // model 改变看的角度， view看的大小，project投射到屏幕上
-    /**绘制cube*/
-    ResourceManager::getShader("cube").use().setVector3f("light.position", camera->cameraPos);
-    ResourceManager::getShader("cube").use().setVector3f("light.direction", camera->cameraDirection);
+   
+
+    cube_shader->use();
+    cube_shader->setMat4("view", view);
+    cube_shader->setMat4("projection", projection);
+    cube_shader->setVec3("light.position", camera->cameraPos);
+    cube_shader->setVec3("light.direction", camera->cameraFront);
+
+    /*qDebug() <<"cameraPos" << camera->cameraPos;*/
     auto cutoff = qCos(qDegreesToRadians(12.5f));
-    ResourceManager::getShader("cube").use().setFloat("light.cutOff", cutoff);
+    cube_shader->setFloat("light.cutOff", cutoff);
     cutoff = qCos(qDegreesToRadians(17.5f));
-    ResourceManager::getShader("cube").use().setFloat("light.outerCutOff", cutoff);
+    cube_shader->setFloat("light.outerCutOff", cutoff);
 
-    ResourceManager::getShader("cube").use().setVector3f("viewPos", camera->cameraPos);
-     // light properties "ambient"（环境光）环境光的强弱 
-    ResourceManager::getShader("cube").use().setVector3f("light.ambient", m_ambient);
-    ResourceManager::getShader("cube").use().setVector3f("light.diffuse", m_diffuse);
-    ResourceManager::getShader("cube").use().setVector3f("light.specular", m_specular);
-    ResourceManager::getShader("cube").use().setFloat("material.shininess", 32.0f);
-    ResourceManager::getShader("cube").use().setFloat("light.constant", m_constant);
-    ResourceManager::getShader("cube").use().setFloat("light.linear", m_linear);
-    ResourceManager::getShader("cube").use().setFloat("light.quadratic", m_quadratic);
-
-
-    OPENGL_FUNCTIONS->glActiveTexture(GL_TEXTURE0);
-    ResourceManager::getTexture("container2").bind();
-
-    OPENGL_FUNCTIONS->glActiveTexture(GL_TEXTURE1);
-    ResourceManager::getTexture("specular").bind();
-
-    ResourceManager::getShader("cube").use().setMatrix4f("view", this->view);
-    ResourceManager::getShader("cube").use().setMatrix4f("projection", this->projection);
-    ResourceManager::getShader("cube").use().setMatrix4f("model", m_model);
-    ResourceManager::getShader("cube").use();
+    cube_shader->setVec3("viewPos", camera->cameraPos);
+      // light properties "ambient"（环境光）环境光的强弱 
+    cube_shader->setVec3("light.ambient", m_ambient);
+    cube_shader->setVec3("light.diffuse", m_diffuse);
+    cube_shader->setVec3("light.specular", m_specular);
+    cube_shader->setFloat("material.shininess", 32.0f);
+    cube_shader->setFloat("light.constant", m_constant);
+    cube_shader->setFloat("light.linear", m_linear);
+    cube_shader->setFloat("light.quadratic", m_quadratic);
 
 
-    cube->render(GL_TRUE, GL_TRUE);
+    QMatrix4x4 cu_model;
+    cu_model.setToIdentity();
+    cu_model.scale(0.1, 0.1, 0.1);
+    cu_model.translate(0.0, -8.0f, 0.0);
+    cube_shader->setMat4("model", cu_model);
+    //cube_model.render(*cube_shader);
+    _objects->render(*cube_shader);
+    
+   
+
+
 
 
     // 绘制 包装盒
@@ -193,30 +203,27 @@ void my_opengl::paintGL()
 
     
     /*****绘制plane*****/
-    OPENGL_FUNCTIONS->glActiveTexture(GL_TEXTURE0);
-    ResourceManager::getTexture("metal").bind();
-    ResourceManager::getShader("plane").use().setMatrix4f("view", this->view);
-    ResourceManager::getShader("plane").use().setMatrix4f("projection", this->projection);
-    QMatrix4x4 plane_model; 
-    plane_model.setToIdentity();
-    ResourceManager::getShader("plane").use().setMatrix4f("model", plane_model);
-    ResourceManager::getShader("plane").use();
-    plane->render(GL_TRUE);
+    plane_shader->use();
+    plane_shader->setMat4("view", view);
+    plane_shader->setMat4("projection", projection);
+    QMatrix4x4 pl_model;
+    pl_model.translate(-1.0f, 1.0f, -1.0f);
+    pl_model.scale(0.2, 0.2, 0.2);
+    plane_shader->setMat4("model", pl_model);
+    plane_model.render(*plane_shader);
 
-    update();
 
-    /*********  绘制cmaera_cube ************/
-    OPENGL_FUNCTIONS->glActiveTexture(GL_TEXTURE0);
-    ResourceManager::getTexture("brickwall").bind();
-    ResourceManager::getShader("cmaera_cube").use().setMatrix4f("view", this->view);
-    ResourceManager::getShader("cmaera_cube").use().setMatrix4f("projection", this->projection);
+ 
+    camera_cube_shader->use();
+    camera_cube_shader->setMat4("view", view);
+    camera_cube_shader->setMat4("projection", projection);
     QMatrix4x4 cam_model;
     cam_model.translate(-1.0f, 1.0f, -1.0f);
-    ResourceManager::getShader("cmaera_cube").use().setMatrix4f("model", cam_model);
-    ResourceManager::getShader("cmaera_cube").use();
-    
-    cmaera_cube->render(GL_TRUE);
-    update();
+    cam_model.scale(0.2, 0.2, 0.2);
+    camera_cube_shader->setMat4("model", cam_model);
+    camera_cube_model.render(*camera_cube_shader);
+
+
 
     /*****绘制天空盒 ********/
     // 深度换冲默认的值为1.0， 如果不加上小于等于的比较条件，那深度值为1.0的天空盒在小于深度值的条件下永远无法通过深度测试
@@ -233,15 +240,15 @@ void my_opengl::paintGL()
     OPENGL_EXTRA_FUNCTIONS->glDepthFunc(GL_LESS);
 
     /******尝试增加3D模型**********/
-    ourModelShader->use();
-    ourModelShader->setMat4("view", view);
-    ourModelShader->setMat4("projection", projection);
-    QMatrix4x4 big_model;
-    big_model.setToIdentity();
-    big_model.scale(QVector3D(0.1f, 0.1f, 0.1f));
-    big_model.translate(QVector3D(0.0f, 4.75f, 0.0f));
-    ourModelShader->setMat4("model", big_model);
-    ourModel.render(*ourModelShader);
+   // ourModelShader->use();
+   // ourModelShader->setMat4("view", view);
+   // ourModelShader->setMat4("projection", projection);
+   // QMatrix4x4 big_model;
+   // big_model.setToIdentity();
+   ///* big_model.scale(QVector3D(0.1f, 0.1f, 0.1f));*/
+   // big_model.translate(QVector3D(0.0f, 1.25f, 0.0f));
+   // ourModelShader->setMat4("model", big_model);
+   // ourModel.render(*ourModelShader);
 
 }
 
@@ -283,9 +290,7 @@ void my_opengl::mouseMoveEvent(QMouseEvent* event)
         float precision = 0.00005;
  
         
-        // qDebug() << dx * 1.0 * precision << " " << dy * 1.0 * precision;
         this->m_model.translate(dx_move * 1.0 * precision, dy_move * 1.0 * precision, 0.0f);
-        //qDebug() << this->m_model;
         update();
 
 
@@ -297,7 +302,7 @@ void my_opengl::wheelEvent(QWheelEvent* event)
 {
     //向前滚动一下是offset=0,120
     QPoint offset = event->angleDelta();
-    qDebug() << "wheelEvent "<<offset;
+    
     camera->DealMouseScroll(offset.y() / 30.0f);
 }
 // 鼠标摁下事件
@@ -404,14 +409,14 @@ void my_opengl::setZRotation(int angle)
 
 void my_opengl::Campos_left()
 {
-    qDebug() << "left_Campos "<<camera->cameraPos;
+    
     // cameraPos -= QVector3D(0.0f, 1.0f, 0.0f) * velocity;
     camera->cameraPos += QVector3D(1.0f, 0.0f, 0.0f) * vel;
     update();
 }
 void my_opengl::Campos_right() 
 {
-    qDebug() << "right_Campos";
+   
     // cameraPos -= QVector3D(0.0f, 1.0f, 0.0f) * velocity;
     camera->cameraPos -= QVector3D(1.0f, 0.0f, 0.0f) * vel;
     update();
@@ -419,14 +424,14 @@ void my_opengl::Campos_right()
 
 void my_opengl::Campos_down()
 {
-    qDebug() << "Campos_down";
+  
     camera->cameraPos += QVector3D(0.0f, 1.0f, 0.0f) * vel;
     update();
 }
 
 void my_opengl::Campos_up()
 {
-    qDebug() << "Campos_up";
+ 
     camera->cameraPos -= QVector3D(0.0f, 1.0f, 0.0f) * vel;
     update();
 }
@@ -435,7 +440,7 @@ void my_opengl::setAmbient(int value)
 {
     float f_valuse = value/10;
     m_ambient = QVector3D(0.1f, 0.1f, 0.1f)* f_valuse;
-    qDebug() << m_ambient;
+
     update();
 }
 
@@ -443,7 +448,7 @@ void my_opengl::set_diffuse(int diffuse)
 {
     float f_valuse = diffuse / 10;
     m_diffuse = QVector3D(0.1f, 0.1f, 0.1f) * f_valuse;
-    qDebug() << m_diffuse;
+   
     update();
 }
 
@@ -451,8 +456,13 @@ void my_opengl::set_specular(int specular)
 {
     float f_valuse = specular / 10;
     m_specular = QVector3D(0.1f, 0.1f, 0.1f) * f_valuse;
-    qDebug() << m_specular;
+  
     update();
 }
 
+void my_opengl::add_object_cube()
+{
+
+    qDebug() << "hi";
+}
 

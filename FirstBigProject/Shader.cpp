@@ -24,6 +24,10 @@ Shader::Shader(const QString& vertexPath, const QString& fragmentPath) {
 	}
 }
 
+
+
+
+
 Shader::~Shader() {
 }
 
@@ -54,7 +58,7 @@ void Shader::setVec4(const QString& name, QVector4D& vec4d)
 
 }
 
-void Shader::setVec3(const QString& name, QVector3D& vec3d)
+void Shader::setVec3(const QString& name,const QVector3D& vec3d)
 {
 	GLuint loc = shaderProgram.uniformLocation(name);
 	shaderProgram.setUniformValue(loc, vec3d);

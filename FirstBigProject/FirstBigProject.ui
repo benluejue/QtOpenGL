@@ -109,22 +109,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QLCDNumber" name="lcdNumber_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>1</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>70</width>
-          <height>16777215</height>
-         </size>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0" colspan="2">
        <widget class="QSlider" name="Y_Slider">
         <property name="minimumSize">
@@ -303,6 +287,45 @@
         </property>
        </widget>
       </item>
+      <item row="15" column="0">
+       <widget class="QPushButton" name="down_p_btn">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>下</string>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="1">
+       <widget class="QPushButton" name="left_p_btn">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>左</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLCDNumber" name="lcdNumber_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>70</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
       <item row="13" column="0">
        <widget class="QPushButton" name="right_p_btn">
         <property name="focusPolicy">
@@ -313,36 +336,13 @@
         </property>
        </widget>
       </item>
-      <item row="13" column="1">
+      <item row="14" column="1">
        <widget class="QPushButton" name="up_p_btn">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="text">
          <string>上</string>
-        </property>
-       </widget>
-      </item>
-      <item row="14" column="0">
-       <widget class="QPushButton" name="down_p_btn">
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="text">
-         <string>下</string>
-        </property>
-       </widget>
-      </item>
-      <item row="14" column="1">
-       <widget class="QPushButton" name="left_p_btn">
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="text">
-         <string>左</string>
-        </property>
-        <property name="checkable">
-         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -372,6 +372,7 @@
    </attribute>
    <addaction name="actionCbue"/>
    <addaction name="actionplane"/>
+   <addaction name="actionobject"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionCbue">
@@ -390,6 +391,21 @@
    </property>
    <property name="text">
     <string>plane</string>
+   </property>
+  </action>
+  <action name="actionobject">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/nanosuit.png</normaloff>img/nanosuit.png</iconset>
+   </property>
+   <property name="text">
+    <string>object</string>
+   </property>
+   <property name="toolTip">
+    <string>添加一个模型</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>

@@ -51,9 +51,14 @@ FirstBigProject::FirstBigProject(QWidget *parent)
     ui.diffuse_slider->setValue(50);
     ui.ambient_slider->setValue(20);
     
+
+    // 添加新的渲染对象
+    connect(ui.actionCbue, &QAction::triggered, Scene, &my_opengl::add_object_cube);
+
     setWindowIcon(QIcon("D:/OpenGL/VSOpenGL/FirstBigProject/FirstBigProject/img/CloverIcon.png"));
     ui.OpenGLverticalLayout->addWidget(Scene);
     Scene->setFocusPolicy(Qt::StrongFocus);
+
     
 
 }
@@ -97,7 +102,6 @@ void FirstBigProject::handleValueChanged_specular(int value)
 {
     ui.lcd_specular->display(value);
 }
-
 
 
 

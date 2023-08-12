@@ -47,7 +47,7 @@ public:
 	QVector3D cameraRight = QVector3D::crossProduct(cameraDirection, Up);
 	QVector3D cameraUp = QVector3D::crossProduct(cameraDirection, cameraRight);
 	QVector3D cameraFront = QVector3D(0.0f, 0.0f, -1.0f);
-
+	// right x轴正方向  cameraup z轴正方形 direction/front y正方形 direction指向物体，front一般cameraFront 0 0 -1
 	
 	GLboolean isFirstMouse = GL_TRUE;
 	GLboolean isLeftMousePress = GL_FALSE;

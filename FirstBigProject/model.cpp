@@ -198,16 +198,16 @@ void Model::render(Shader& shader) const {
     }
 }
 
-//HitRecord Model::hit(const Ray& ray, const glm::mat4& modelMatrix) const {
-//    HitRecord record = HitRecord();
-//    for (unsigned int i = 0; i < _meshes.size(); i++) {
-//        HitRecord hitRecord = _meshes[i].hit(ray, modelMatrix);
-//        if (hitRecord.hitted() && hitRecord.t() < record.t()) {
-//            record = hitRecord;
-//        }
-//    }
-//    return record;
-//}
+CollisionRecorder Model::hit(const Ray& ray, const QMatrix4x4& modelMatrix) const  {
+    CollisionRecorder record = CollisionRecorder();
+    for (unsigned int i = 0; i < _meshes.size(); i++) {
+        CollisionRecorder hitrecord = _meshes[i].hit(ray, modelMatrix);
+        if (hitrecord.hitted() && hitrecord.t() < record.t()) {
+            record = hitrecord;
+        }
+    }
+    return record;
+}
 
 Model* Model::copyToCurrentContext() const {
     // Reload all textures

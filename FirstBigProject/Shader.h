@@ -9,7 +9,9 @@
 
 class Shader {
 public:
+	Shader(){}
 	Shader(const QString& vertexSourcePath, const QString& fragmentSourcePath);
+	//Shader(const Shader& other);
 	~Shader();
 	QOpenGLShaderProgram shaderProgram;
 
@@ -30,7 +32,7 @@ public:
 	void setVec4(const QString& name, QVector4D& vec4d);
 
 
-	void setVec3(const QString& name, QVector3D& vec3d);
+	void setVec3(const QString& name, const QVector3D& vec3d);
 
 };
 

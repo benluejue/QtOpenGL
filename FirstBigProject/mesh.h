@@ -9,7 +9,8 @@
 #include "ray.h"
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
-// #include "hitrecord.h"
+#include "CollisionRecorder.h"
+
 
 class Mesh {
 private:
@@ -38,7 +39,7 @@ public:
 
 public:
     void render( Shader& shader) const;
-    // HitRecord hit(const Ray& ray, const glm::mat4& modelMatrix) const;
+    CollisionRecorder hit(const Ray& ray, const QMatrix4x4& modelMatrix) const;
 
 private:
     void setupMesh();

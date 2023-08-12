@@ -18,7 +18,7 @@ void Boundary::updateControlPoints(const QVector3D point) {
 
 
 
-bool Boundary::hit(const Ray2& ray) const {
+bool Boundary::hit(const Ray& ray) const {
     // Test whether the ray intersects with the boundary box
     // The boundary box is defined by the bottom back left control point and the top front right control point
     // The ray is already transformed

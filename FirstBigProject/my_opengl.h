@@ -29,7 +29,8 @@
 #include "skybox.h"
 #include "model.h"
 #include "shader2.h"
-
+#include "GraphicsRenderer.h"
+#include "CollisionRecorder.h"
 
 
 
@@ -57,7 +58,7 @@ public:
 	void processInput(GLfloat dt);				// 键盘控制 好处是这种方式可以实现连续控制
 	void keyPressEvent(QKeyEvent* event);   //键盘按下事件
 	void keyReleaseEvent(QKeyEvent* event);  //键盘释放事件
-	Model ourModel;
+	
 
 public slots:
 	void setXRotation(int angle);
@@ -72,19 +73,31 @@ public slots:
 	void set_diffuse(int diffuse);
 	void set_specular(int specular);
 
+	void add_object_cube();
+
+
 signals:
 	void xRotationChanged(int angle);
 	void yRotationChanged(int angle);
 	void zRotationChanged(int angle);
-// 几个基础形状
+
 public:
-	std::vector<basic_shapes*>shapes;
+	std::vector<GraphicsRenderer*>_shapes;
 	
-	basic_shapes* cmaera_cube;
-	basic_shapes* plane;
-	basic_shapes* cube;
+
 	SkyBox* skybox;
 	Shader* ourModelShader;
+	Shader* camera_cube_shader;
+	Shader* plane_shader;
+	Shader* cube_shader;
+
+	Model ourModel;
+	Model camera_cube_model;
+	Model plane_model;
+	Model cube_model;
+
+	GraphicsRenderer* _objects;
+	CollisionRecorder _hitRecord;
 
 private:
 	GLuint VAO, VBO;
@@ -116,18 +129,7 @@ private:
 	QVector3D m_ambient = QVector3D(0.2f, 0.2f, 0.2f);
 	QVector3D m_diffuse = QVector3D(0.5f, 0.5f, 0.5f);
 	QVector3D m_specular{ 1.0f, 1.0f, 1.0f };
-	QVector3D cubePositions[10] = {
-		QVector3D(0.8f,   0.8f,  0.0f),
-		QVector3D(0.8f,  -0.8f,  0.0f),
-		QVector3D(-0.8f, 0.8f, 0.0f),
-		QVector3D(-0.8f,  -0.8f, 0.0f),
-		QVector3D(2.4f, -0.4f, -3.5f),
-		QVector3D(-1.7f,  3.0f, -7.5f),
-		QVector3D(1.3f, -2.0f, -2.5f),
-		QVector3D(1.5f,  2.0f, -2.5f),
-		QVector3D(1.5f,  0.2f, -1.5f),
-		QVector3D(-1.3f,  1.0f, -1.5f)
-	};
+
 
 	// 时间差
 	QElapsedTimer  time;
@@ -146,6 +148,7 @@ private:
 	QMatrix4x4 view;
 	QMatrix4x4 projection;
 
+	GraphicsRenderer* hitTest(const Ray& ray);
 
 	bool m_first_mouse_right = true;
 	bool m_first_mouse_left = true;

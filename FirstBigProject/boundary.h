@@ -2,7 +2,7 @@
 
 
 #include <QVector3D>
-#include "ray2.h"
+#include "ray.h"
 #include "utils.h"
 
 class Boundary {
@@ -28,7 +28,7 @@ public:
     inline QVector3D bottomCenterPoint() const;
     inline QVector3D centerPoint() const;
 
-    bool hit(const Ray2& ray) const;
+    bool hit(const Ray& ray) const;
 
     void render() const;
 };

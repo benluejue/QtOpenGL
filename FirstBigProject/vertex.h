@@ -1,6 +1,5 @@
 #pragma once
 
-#include <GLM/glm.hpp>
 #include <QVector3D>
 struct Vertex {
     QVector3D _position = QVector3D(0.0f, 0.0f, 0.0f);

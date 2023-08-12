@@ -1,23 +1,18 @@
 #pragma once
 
+#include <GLM/glm.hpp>
 #include <QVector3D>
-#include <QVector4D>
-#include <QVector>
-#include <QDebug>
-#include <QMatrix4x4>
 
-class Ray
-{
-	Ray();
-	~Ray();
-	void addRay(float x, float y);
-	
-	void transData(const QMatrix4x4& projection, const QMatrix4x4& view, const QVector3D& cameraPos);
-	// 穿进来一堆AABB盒子，返回距离最近的物体盒子
-	int picking(float x, float y, QVector<QVector<QVector3D>> vec_triangles);
+class Ray {
 private:
-	QVector<QVector3D> vec_ray;
-	QMatrix4x4 projection, view;
-	QVector3D cameraPos;
-};
+    QVector3D _origin = QVector3D(0.0f,0.0f, 0.0f);
+    QVector3D _direction = QVector3D(0.0f, 0.0f, -1.0f);
 
+public:
+    Ray() {}
+    Ray(QVector3D  origin, QVector3D  direction) : _origin(origin), _direction(direction) {}
+
+public:
+    inline QVector3D  origin() const { return _origin; }
+    inline QVector3D  direction() const { return _direction; }
+};

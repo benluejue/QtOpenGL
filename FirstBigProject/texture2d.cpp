@@ -16,6 +16,7 @@ Texture2D::Texture2D(TextureType type, std::string path)
     QString qfile = QString::fromStdString(path);
     texture = new QOpenGLTexture(QOpenGLTexture::Target2D); //直接生成绑定一个2d纹理, 并生成多级纹理MipMaps
     texture->setFormat(internal_format);
+    // 使用gltf模型时候QImage(qfile)不需要翻转，否则需要QImage(qfile).mirrored()
     texture->setData(QImage(qfile).mirrored(), QOpenGLTexture::GenerateMipMaps);
 
     texture->setWrapMode(QOpenGLTexture::DirectionS, wrap_s);// 等于glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

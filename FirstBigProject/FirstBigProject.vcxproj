@@ -94,6 +94,8 @@
     <ClCompile Include="boundary.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ebo.cpp" />
+    <ClCompile Include="GraphicsRenderer.cpp" />
+    <ClCompile Include="LightingMethods.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="mainCameraOpenGL.cpp" />
     <ClCompile Include="mesh.cpp" />
@@ -101,7 +103,6 @@
     <ClCompile Include="my_opengl.cpp" />
     <ClCompile Include="opnegl_res_control.cpp" />
     <ClCompile Include="public.cpp" />
-    <ClCompile Include="ray.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="shader2.cpp" />
@@ -124,7 +125,10 @@
     <ClInclude Include="basic_shapes.h" />
     <ClInclude Include="boundary.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CollisionRecorder.h" />
     <ClInclude Include="ebo.h" />
+    <ClInclude Include="GraphicsRenderer.h" />
+    <ClInclude Include="LightingMethods.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="mainCameraOpenGL.h" />
     <ClInclude Include="mesh.h" />
@@ -132,7 +136,6 @@
     <ClInclude Include="opnegl_res_control.h" />
     <ClInclude Include="pubilc.hpp" />
     <ClInclude Include="ray.h" />
-    <ClInclude Include="ray2.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />

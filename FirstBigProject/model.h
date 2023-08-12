@@ -11,7 +11,7 @@
 #include "mesh.h"
 #include "shader2.h"
 #include "boundary.h"
-// #include "hitrecord.h"
+#include "CollisionRecorder.h"
 
 class Model {
 public:
@@ -51,5 +51,5 @@ private:
 
 public:
     void render(Shader& shader) const;
-    //HitRecord hit(const Ray& ray, const glm::mat4& modelMatrix) const;    // test the hit record of an input array (transformed into local space)
+    CollisionRecorder hit(const Ray& ray, const QMatrix4x4& modelMatrix) const;    // test the hit record of an input array (transformed into local space)
 };

@@ -35,7 +35,7 @@ in vec3 Normal;  // 法向量
 in vec3 FragPos; // 顶点
 in vec2 TexCoords;// 纹理顶点
 
-uniform vec3 viewPos;  // 进行光照计算时候的相机位置，需要使用这个进行光照计算,在顶点着色器和片段着色器之间传递camera的坐标信息
+uniform vec3 viewPos;  // 进行光照计算时候的"相机位置"，需要使用这个进行光照计算,在顶点着色器和片段着色器之间传递camera的坐标信息
 uniform Material material;
 uniform Light light;
 
