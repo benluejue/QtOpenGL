@@ -18,6 +18,9 @@ void main()
 //    gl_Position = projection * view * model * vec4(aPos, 1.0);
 //    TexCoord = aTexCoord;
     FragPos = vec3(model * vec4(aPos, 1.0));
+
+    // https://learnopengl-cn.github.io/02%20Lighting/02%20Basic%20Lighting/
+    // 在进行缩放的等操作时候，需要进行法线的处理
     Normal = mat3(transpose(inverse(model))) * aNormal;  
     TexCoords = aTexCoords;
     gl_Position = projection * view * vec4(FragPos, 1.0);

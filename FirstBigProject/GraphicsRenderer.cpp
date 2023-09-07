@@ -1,10 +1,14 @@
 #include "GraphicsRenderer.h"
 
-GraphicsRenderer::GraphicsRenderer(Model* model) : _model(model) {
+GraphicsRenderer::GraphicsRenderer(Model* model) 
+    : _model(model) ,_shapeType(SHAPETYPE::EASY_RENDER)
+{
     _boundary = model->boundBox();
 }
 
-GraphicsRenderer::GraphicsRenderer(Model* model, QVector3D position) : _model(model), _position(position) {
+GraphicsRenderer::GraphicsRenderer(Model* model, QVector3D position) 
+    : _model(model), _position(position) ,  _shapeType(SHAPETYPE::EASY_RENDER)
+{
     _boundary = model->boundBox();
 }
 

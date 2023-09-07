@@ -132,7 +132,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
     Logger::debug("Vertices vector memory usage: " + std::to_string(vertices.size() * sizeof(Vertex) / 1024) + " KB");
 
     Logger::debug("Processing mesh with " + std::to_string(mesh->mNumFaces) + " faces");
-    // Process indices
+    // Process indices face
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
         for (unsigned int j = 0; j < face.mNumIndices; j++) {

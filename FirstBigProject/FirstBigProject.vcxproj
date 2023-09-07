@@ -96,6 +96,7 @@
     <ClCompile Include="ebo.cpp" />
     <ClCompile Include="GraphicsRenderer.cpp" />
     <ClCompile Include="LightingMethods.cpp" />
+    <ClCompile Include="light_control.cpp" />
     <ClCompile Include="logger.cpp" />
     <ClCompile Include="mainCameraOpenGL.cpp" />
     <ClCompile Include="mesh.cpp" />
@@ -117,6 +118,7 @@
     <QtMoc Include="FirstBigProject.h" />
     <ClCompile Include="FirstBigProject.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="light_control.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="my_opengl.h" />
@@ -129,19 +131,19 @@
     <ClInclude Include="ebo.h" />
     <ClInclude Include="GraphicsRenderer.h" />
     <ClInclude Include="LightingMethods.h" />
+    <QtMoc Include="light_control.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="mainCameraOpenGL.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="opnegl_res_control.h" />
-    <ClInclude Include="pubilc.hpp" />
+    <ClInclude Include="pubilc.h" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="shader2.h" />
     <ClInclude Include="skybox.h" />
-    <ClInclude Include="stb_image.h" />
     <ClInclude Include="texture2d.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="vao.h" />

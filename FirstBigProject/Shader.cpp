@@ -37,6 +37,11 @@ void Shader::use()
 	shaderProgram.bind();
 }
 
+void Shader::unuse()
+{
+	shaderProgram.release();
+}
+
 void Shader::setMat4(const QString& name, const QMatrix4x4& value)
 {
 

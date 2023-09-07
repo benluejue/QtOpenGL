@@ -22,6 +22,8 @@ private:
     float _shininess = 32.0f;
 
     VertexArrayObject _vao = VertexArrayObject::empty();
+    GLuint depthMapFBO;
+
 
 public:
     Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture2D>& textures);

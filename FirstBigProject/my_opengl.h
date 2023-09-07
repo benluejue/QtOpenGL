@@ -19,7 +19,7 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include "Shader.h"
-#include "pubilc.hpp"
+#include "pubilc.h"
 #include "Camera.h"
 #include "utils.h"
 #include "ray.h"
@@ -31,6 +31,9 @@
 #include "shader2.h"
 #include "GraphicsRenderer.h"
 #include "CollisionRecorder.h"
+#include <QMessageBox>
+#include <QApplication>
+
 
 
 
@@ -58,7 +61,9 @@ public:
 	void processInput(GLfloat dt);				// 键盘控制 好处是这种方式可以实现连续控制
 	void keyPressEvent(QKeyEvent* event);   //键盘按下事件
 	void keyReleaseEvent(QKeyEvent* event);  //键盘释放事件
-	
+	void setBlinn(bool isTrue);
+	void choseLight(LIGHTTYPE);
+
 
 public slots:
 	void setXRotation(int angle);
@@ -74,46 +79,50 @@ public slots:
 	void set_specular(int specular);
 
 	void add_object_cube();
+	void add_object_plane();
+	void add_object_bigtoy();
 
+	void rest_last_xyz();
+	
+
+
+	
 
 signals:
 	void xRotationChanged(int angle);
 	void yRotationChanged(int angle);
 	void zRotationChanged(int angle);
 
+	void rest_last_xyz_signal();
+
 public:
+	// 所有物体都加载在这里
 	std::vector<GraphicsRenderer*>_shapes;
-	
 
 	SkyBox* skybox;
 	Shader* ourModelShader;
 	Shader* camera_cube_shader;
-	Shader* plane_shader;
-	Shader* cube_shader;
+	Shader* easy_shader;
+	Shader* full_shader;
+	Shader* boundary_shader;
 
 	Model ourModel;
-	Model camera_cube_model;
+	Model *camera_cube_model;
 	Model plane_model;
 	Model cube_model;
 
-	GraphicsRenderer* _objects;
+	GraphicsRenderer* _cmaera_objects;
 	CollisionRecorder _hitRecord;
-
+	void set_light_roate(QVector3D angle);
 private:
-	GLuint VAO, VBO;
-	QOpenGLShaderProgram program;
+	void moveOperatingObject(const Ray& ray);
 
-
-
-	Shader* LightShader;
-	Shader* boundaryShader;
-
-
+	
 	Camera* camera;
 	QMatrix4x4 m_model;
 	QMatrix4x4 m_cam_pos;
 	int m_xRot = 0, m_yRot = 0, m_zRot = 0;
-	int m_last_xRot = 0, m_last_yRot = 0, m_last_zRot = 0;
+	int m_last_xRot = 3000, m_last_yRot = 3000, m_last_zRot = 3000;
 	// 右键移动镜头的坐标变量
 	QPoint cam_lastPos;
 	// 左键 移动物体的坐标变量
@@ -122,13 +131,13 @@ private:
 	// 左右移动速度
 	float vel = 0.1;
 	// 材质
-	QOpenGLTexture* diffuseMap;//漫反射贴图
-	QOpenGLTexture* specularMap;//高光贴图
 	QOpenGLTexture* metalMap;
 	// 光照
-	QVector3D m_ambient = QVector3D(0.2f, 0.2f, 0.2f);
+	QVector3D m_ambient = QVector3D(0.8f, 0.8f, 0.8f);
 	QVector3D m_diffuse = QVector3D(0.5f, 0.5f, 0.5f);
 	QVector3D m_specular{ 1.0f, 1.0f, 1.0f };
+	// 半程向量光
+	bool blinn = false;
 
 
 	// 时间差
@@ -155,7 +164,27 @@ private:
 	float m_constant = 1.0;
 	float m_linear = 0.09f;
 	float m_quadratic = 0.032f;
-	
+	int plane_cnt = 0; // plane总数
+
+	QVector3D light_angle{0.0f,0.0f,0.0f};
+
+	// 几个状态之间的转换
+	GraphicsRenderer* _hoveredObject = nullptr;
+	GraphicsRenderer* _pressedObject = nullptr;
+	GraphicsRenderer* _selectedObject = nullptr;
+	GraphicsRenderer* _operatingObject = nullptr;
+	CollisionRecorder _hit_record;
+
+	bool _controlPressed = false;
+	bool _dragged = false;
+	bool _hideBound = false;
+	// 被选中物体的下标
+	int idx_model = 0;
+	// 光的类型
+	LIGHTTYPE light_type;
+	// 100 = 4 --  010 = 2 --- 001 = 1
+	int light_local = 0x04;
 };
+
 
 #endif

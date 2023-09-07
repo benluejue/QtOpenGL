@@ -23,9 +23,10 @@ public:
     
 
 private slots:
-    // void on_pushButton_clicked();
+    void restXYZ_slider(); // 重置xyz
     
-
+signals:
+    void angleSent(QVector3D angel);
 
 private:
     Ui::FirstBigProjectClass ui;

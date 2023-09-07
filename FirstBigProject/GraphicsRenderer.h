@@ -10,16 +10,25 @@
 #include <QtMath>
 #include "CollisionRecorder.h"
 #include "ray.h"
+#include "pubilc.h"
 
+enum SHAPE_COLLIDE_STATE
+{
+    WAS_HIT = 1,
+    MISS_HIT
+};
 
 class GraphicsRenderer {
 public:
     static GraphicsRenderer empty() {
         return GraphicsRenderer();
     }
-
+    SHAPETYPE _shapeType;
+    SHAPE_COLLIDE_STATE _shape_collide_state;
 private:
-    GraphicsRenderer() {}
+    GraphicsRenderer()
+        :_shape_collide_state(MISS_HIT)
+    {}
 
 private:
     Model* _model = nullptr;
@@ -31,6 +40,7 @@ private:
     QMatrix4x4 _rotation;
     QVector3D _scale{ 1.0f, 1.0f, 1.0f };
     Boundary _boundary; // the renderable's boudary box, should be updated after a transformation is done
+    
 
 public:
     GraphicsRenderer(Model* model);
@@ -81,8 +91,9 @@ inline QMatrix4x4 GraphicsRenderer::modelMatrix() const {
     angle = glm::angle(quat);*/
     // 可能有问题
     QQuaternion quat;
-    QMatrix3x3 rotationMatrix = _rotation.toGenericMatrix<3, 3>();
-    quat = QQuaternion::fromRotationMatrix(rotationMatrix);
+    
+    /*QMatrix3x3 rotationMatrix = _rotation.toGenericMatrix<3, 3>();
+    quat = QQuaternion::fromRotationMatrix(rotationMatrix);*/
     // quat.vector()返回w，用来表示旋转方向
     QVector3D rotationAxis;
     float rotationAngle;

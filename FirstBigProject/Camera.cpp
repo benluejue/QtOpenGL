@@ -87,6 +87,7 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
 void Camera::updateCameraVectors()
 {
 	QVector3D front;
+	qDebug() << "cameraFront" << cameraFront;
 	//  calculate the new Front vector
 	front.setX(qCos(qDegreesToRadians(yaw)) * qCos(qDegreesToRadians(pitch)));
 	front.setY(qSin(qDegreesToRadians(pitch)));
@@ -99,6 +100,20 @@ void Camera::updateCameraVectors()
 	this->cameraUp = QVector3D::crossProduct(cameraRight, cameraFront);
 	this->cameraUp = cameraUp.normalized();
 
+}
+
+Ray Camera::generateRay(QVector2D mouseRelativePosition, float aspectRatio) const
+{
+	// Calculate the near plane basic geometry
+	float nearPlaneHeight = 2.0f * glm::tan(glm::radians(zoom) / 2.0f) * 0.1;
+	float nearPlaneWidth = nearPlaneHeight * aspectRatio;
+	// Calculate the vector that points from camera to left bottom corner of the near plane
+	QVector3D basic = cameraFront * 0.1 - cameraRight * nearPlaneWidth / 2.0f - cameraUp * nearPlaneHeight / 2.0f;
+	// Get the offset vector on the near plane from left bottom corner
+	QVector3D offset = cameraRight * mouseRelativePosition.x() * nearPlaneWidth + cameraUp * mouseRelativePosition.y() * nearPlaneHeight;
+	// Calculate the final ray direction
+	QVector3D direction = (basic + offset).normalized();
+	return Ray(cameraPos, direction);
 }
 
 

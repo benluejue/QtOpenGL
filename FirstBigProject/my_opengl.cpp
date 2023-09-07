@@ -22,9 +22,7 @@ my_opengl::my_opengl(QWidget* parent)
 
 my_opengl::~my_opengl()
 {
-    //delete planeShader;
-    delete boundaryShader;
-    
+  
 }
 
 GraphicsRenderer* my_opengl::hitTest(const Ray& ray) {
@@ -32,7 +30,7 @@ GraphicsRenderer* my_opengl::hitTest(const Ray& ray) {
     GraphicsRenderer* newObject = nullptr;
     // Object hit test
     for (int i = 0; i < _shapes.size(); i++) {
-        qDebug() << "-----------------------------------------";
+       
         Logger::debug("Testing object " + std::to_string(i));
         GraphicsRenderer* obj = _shapes[i];
         // 后续补上_operatingObject为在操作的物体
@@ -43,6 +41,11 @@ GraphicsRenderer* my_opengl::hitTest(const Ray& ray) {
         CollisionRecorder hitRecord = obj->hit(ray);
         if (hitRecord.hitted()) {
             Logger::debug("Hitted object " + std::to_string(i));
+            qDebug() << i <<"is Hitted";
+            idx_model = i;
+            obj[i]._shape_collide_state = WAS_HIT;
+
+            update();
         }
         else {
             Logger::debug("Missed object " + std::to_string(i));
@@ -52,20 +55,6 @@ GraphicsRenderer* my_opengl::hitTest(const Ray& ray) {
             newObject = obj;
         }
     }
-    // Terrain hit test
-   /* if (_terrain != nullptr) {
-        HitRecord hitRecord = _terrain->hit(ray);
-        if (hitRecord.hitted()) {
-            Logger::debug("Hitted terrain");
-        }
-        else {
-            Logger::debug("Missed terrain");
-        }
-        if (hitRecord.hitted() && hitRecord.t() < newRecord.t()) {
-            newRecord = hitRecord;
-            newObject = nullptr;
-        }
-    }*/
     _hitRecord = newRecord;
     return newObject;
 }
@@ -85,49 +74,27 @@ void my_opengl::initializeGL()
     lastFrame = 0.0f;
     time.start();
    
-    boundaryShader = new Shader("./boundary_shader.vert", "./boundary_shader.frag");
-
-
     camera = new Camera(QVector3D(0.0f, 0.0f, 3.0f));
-  
 
-    plane_model = Model("D:/OpenGL/OpenGL/resources/plane/plane.obj");
-    plane_shader = new Shader("./plane.vert", "./plane.frag");
-
-
-    /**** 渲染一个摄像机正方体******/
-    camera_cube_model = Model("D:/OpenGL/OpenGL/resources/camera_cube/camera_cube.obj");
+    
+    
+    
+    easy_shader = new Shader("./plane.vert", "./plane.frag");
+    full_shader = new Shader("./shader/colors.vert", "./shader/colors.frag");
     camera_cube_shader = new Shader(":/shader/shader/camera_cube.vert", ":/shader/shader/camera_cube.frag");
 
+    boundary_shader = new Shader("boundary_shader.vert","boundary_shader.frag");
+
+    /**** 渲染一个摄像机正方体******/
+    camera_cube_model = new Model(camera_cube_objpath);
+    _cmaera_objects = new GraphicsRenderer(camera_cube_model);
+    _cmaera_objects->_shapeType = SHAPETYPE::CAMERA_RENDER;
+    _shapes.push_back(_cmaera_objects);
 
     /**天空盒*/
     skybox = new SkyBox;
     /***载入shader**/
     ResourceManager::loadShader("skybox", ":/shader/shader/skybox.vert", ":/shader/shader/skybox.frag");
-
-    /******尝试增加模型**********/ 
-    // D:/OpenGL/OpenGL/resources/99-intergalactic_spaceship-obj/Intergalactic_Spaceship-(Wavefront).obj
-    //  "D:/OpenGL/VSOpenGL/FirstBigProject/FirstBigProject/3Dmodel/nanosuit/nanosuit.obj"
-    // D:/OpenGL/OpenGL/resources/LightBulb1/LightBulbOBJ.obj
-    // D:/OpenGL/OpenGL/resources/planet/planet_Quom1200.png
-    // D:/OpenGL/OpenGL/resources/rock/rock.obj
-    // D:/OpenGL/OpenGL/resources/cube/cube.obj
-    // D:/OpenGL/OpenGL/resources/11-obj/.OBJ/Room #1.obj
-    std::string path = "D:/OpenGL/OpenGL/resources/cube/base_cube.obj";
-    ourModel = Model(path);
-    /*载入shader*/
-    QString vert_str = ":/shader/shader/our_model.vert";
-    QString frag_str = ":/shader/shader/our_model.frag";
-    ourModelShader = new Shader(vert_str, frag_str);
-
-
-    cube_model = Model("D:/OpenGL/VSOpenGL/FirstBigProject/FirstBigProject/3Dmodel/nanosuit/nanosuit.obj");
-    cube_shader = new Shader("./shader/colors.vert", "./shader/colors.frag");
-
-    // 添加新物体
-    _objects = new GraphicsRenderer(&cube_model);
-
-
 }
 
 void my_opengl::resizeGL(int w, int h)
@@ -156,72 +123,99 @@ void my_opengl::paintGL()
     this->projection.perspective(camera->zoom, (GLfloat)width() / (GLfloat)height(), 0.1f, 100.f);
    
    
-
-    cube_shader->use();
-    cube_shader->setMat4("view", view);
-    cube_shader->setMat4("projection", projection);
-    cube_shader->setVec3("light.position", camera->cameraPos);
-    cube_shader->setVec3("light.direction", camera->cameraFront);
-
-    /*qDebug() <<"cameraPos" << camera->cameraPos;*/
-    auto cutoff = qCos(qDegreesToRadians(12.5f));
-    cube_shader->setFloat("light.cutOff", cutoff);
-    cutoff = qCos(qDegreesToRadians(17.5f));
-    cube_shader->setFloat("light.outerCutOff", cutoff);
-
-    cube_shader->setVec3("viewPos", camera->cameraPos);
-      // light properties "ambient"（环境光）环境光的强弱 
-    cube_shader->setVec3("light.ambient", m_ambient);
-    cube_shader->setVec3("light.diffuse", m_diffuse);
-    cube_shader->setVec3("light.specular", m_specular);
-    cube_shader->setFloat("material.shininess", 32.0f);
-    cube_shader->setFloat("light.constant", m_constant);
-    cube_shader->setFloat("light.linear", m_linear);
-    cube_shader->setFloat("light.quadratic", m_quadratic);
-
-
-    QMatrix4x4 cu_model;
-    cu_model.setToIdentity();
-    cu_model.scale(0.1, 0.1, 0.1);
-    cu_model.translate(0.0, -8.0f, 0.0);
-    cube_shader->setMat4("model", cu_model);
-    //cube_model.render(*cube_shader);
-    _objects->render(*cube_shader);
     
-   
-
-
-
-
-    // 绘制 包装盒
-    boundaryShader->use();
-    boundaryShader->setMat4("view", this->view);
-    boundaryShader->setMat4("projection", this->projection);
-    boundaryShader->setMat4("model", m_model);
-    boundary.render();
-    update();
-
-    
-    /*****绘制plane*****/
-    plane_shader->use();
-    plane_shader->setMat4("view", view);
-    plane_shader->setMat4("projection", projection);
-    QMatrix4x4 pl_model;
-    pl_model.translate(-1.0f, 1.0f, -1.0f);
-    pl_model.scale(0.2, 0.2, 0.2);
-    plane_shader->setMat4("model", pl_model);
-    plane_model.render(*plane_shader);
-
 
  
-    camera_cube_shader->use();
-    camera_cube_shader->setMat4("view", view);
-    camera_cube_shader->setMat4("projection", projection);
-    QMatrix4x4 cam_model;
-    cam_model.translate(-1.0f, 1.0f, -1.0f);
-    cam_model.scale(0.2, 0.2, 0.2);
-    camera_cube_shader->setMat4("model", cam_model);
-    camera_cube_model.render(*camera_cube_shader);
+   // // 渲染所有_shape里的模型，公用一个shader？
+   for (auto shape : _shapes) {
+       if (shape->_shapeType == SHAPETYPE::EASY_RENDER) {
+           makeCurrent();
+           easy_shader->use();
+           easy_shader->setMat4("view", view);
+           easy_shader->setMat4("projection", projection);
+    
+           //pl_model.rotate(120.0f, QVector3D(0.0f, 0.0f, 1.0f));
+           easy_shader->setMat4("model", shape->modelMatrix());
+           shape->render(*easy_shader);
+           shape->boundary().render();
+           easy_shader->unuse();
+           //update();
+       }
+       else if(shape->_shapeType == SHAPETYPE::FULL_RENDER) {
+           makeCurrent();
+           full_shader->use();
+           full_shader->setMat4("view", view);
+           full_shader->setMat4("projection", projection);
+           // 灯的位置 full_shader->setVec3("light.position", camera->cameraPos);_shapes[0]->position())
+           full_shader->setVec3("light.position", _shapes[0]->position());
+           // 光的朝向full_shader->setVec3("light.direction", camera->cameraFront);
+           
+           auto dit = light_angle - _shapes[0]->position();
+           full_shader->setVec3("light.direction", dit);
+           
+         /*  qDebug() <<"cameraPos" << camera->cameraFront;
+           qDebug() << "light.position" << _shapes[0]->position();*/
+
+           auto cutoff = qCos(qDegreesToRadians(12.5f));
+           full_shader->setFloat("light.cutOff", cutoff);
+           cutoff = qCos(qDegreesToRadians(17.5f));
+           full_shader->setFloat("light.outerCutOff", cutoff);
+
+           full_shader->setVec3("viewPos", camera->cameraPos);
+           // light properties "ambient"（环境光）环境光的强弱 
+           full_shader->setVec3("light.ambient", m_ambient);
+           full_shader->setVec3("light.diffuse", m_diffuse);
+           full_shader->setVec3("light.specular", m_specular);
+           full_shader->setFloat("material.shininess", 32.0f);
+           full_shader->setFloat("light.constant", m_constant);
+           full_shader->setFloat("light.linear", m_linear);
+           full_shader->setFloat("light.quadratic", m_quadratic);
+           QMatrix4x4 cu_model;
+           cu_model.setToIdentity();
+           full_shader->setMat4("model", shape->modelMatrix());
+           full_shader->setInt("bilnn", blinn);
+           full_shader->setInt("direction_light", light_local==0x04);
+           full_shader->setInt("isdirection", light_local == 0x02);
+           full_shader->setInt("spotlight", light_local == 0x01);
+           shape->render(*full_shader);
+           //shape->boundary().render();
+           full_shader->unuse();
+           update();
+       }
+       else if (shape->_shapeType == SHAPETYPE::CAMERA_RENDER) {
+           makeCurrent();
+           camera_cube_shader->use();
+           camera_cube_shader->setMat4("view", view);
+           camera_cube_shader->setMat4("projection", projection);
+           QMatrix4x4 cam_model;
+           cam_model.setToIdentity();
+           camera_cube_shader->setMat4("model", shape->modelMatrix());
+
+          
+           //qDebug() <<"now camera cube pos is" << shape->position();
+           //camera_cube_model->render(*camera_cube_shader);
+           shape->render(*camera_cube_shader);
+
+           camera_cube_shader->unuse();
+           update();
+       }
+       // 渲染盒子
+       for (auto shape : _shapes) {
+           boundary_shader->use();
+           boundary_shader->setMat4("view", view);
+           boundary_shader->setMat4("projection", projection);
+           boundary_shader->setVec3("viewPos", camera->cameraPos);
+           boundary_shader->setVec3("lightPos", _shapes[0]->position());
+
+           QMatrix4x4 cu_model;
+           cu_model.setToIdentity();
+           boundary_shader->setMat4("model", cu_model);
+           shape->boundary().render();
+           boundary_shader->unuse();
+       }
+
+
+   }
 
 
 
@@ -239,16 +233,7 @@ void my_opengl::paintGL()
     skybox->render();
     OPENGL_EXTRA_FUNCTIONS->glDepthFunc(GL_LESS);
 
-    /******尝试增加3D模型**********/
-   // ourModelShader->use();
-   // ourModelShader->setMat4("view", view);
-   // ourModelShader->setMat4("projection", projection);
-   // QMatrix4x4 big_model;
-   // big_model.setToIdentity();
-   ///* big_model.scale(QVector3D(0.1f, 0.1f, 0.1f));*/
-   // big_model.translate(QVector3D(0.0f, 1.25f, 0.0f));
-   // ourModelShader->setMat4("model", big_model);
-   // ourModel.render(*ourModelShader);
+   
 
 }
 
@@ -286,11 +271,14 @@ void my_opengl::mouseMoveEvent(QMouseEvent* event)
         }
         int dx_move = event->position().toPoint().x() - move_lastPos.x();
         int dy_move = move_lastPos.y() - event->position().toPoint().y();
-
-        float precision = 0.00005;
- 
-        
-        this->m_model.translate(dx_move * 1.0 * precision, dy_move * 1.0 * precision, 0.0f);
+        /*  float precision = 0.00005;       
+            this->m_model.translate(dx_move * 1.0 * precision, dy_move * 1.0 * precision, 0.0f);*/
+         
+        //QVector2D delta{ dx_move , dy_move };
+        float relX = (float)event->x() / (float)width();
+        float relY = 1 - (float)event->y() / (float)height();
+        Ray ray = camera->generateRay(QVector2D(relX, relY), (float)width() / (float)height());
+        moveOperatingObject(ray);
         update();
 
 
@@ -308,12 +296,75 @@ void my_opengl::wheelEvent(QWheelEvent* event)
 // 鼠标摁下事件
 void my_opengl::mousePressEvent(QMouseEvent* event)
 {
-    qDebug() << "mousePressEvent";
+    if (event->button() == Qt::LeftButton) {
+        _pressedObject = _hoveredObject;
+    }
 
 }
 // 触发
 void my_opengl::mouseReleaseEvent(QMouseEvent* event)
 {
+    // State transfer
+    bool startOperatingObject = false;
+    if (_operatingObject != nullptr) {
+        // Click when having an operating object
+        _operatingObject->updateBoundary();
+        if (!_dragged) {
+            // if haven't changed since last mouse press, it's a submission click
+            _operatingObject = nullptr;
+            _hideBound = false;
+        }
+        else {
+            // dragged, keep it operational
+            _dragged = false;
+            _hideBound = true;
+            _operatingObject = _operatingObject;
+        }
+    }
+    else if (_pressedObject != nullptr && _pressedObject == _selectedObject) {
+        if (!_dragged) {
+            // Double select on an object, set in operating mode
+            _operatingObject = _selectedObject;
+            _hideBound = true;
+            startOperatingObject = true;
+        }
+        else {
+            // keep it selected
+            _dragged = false;
+            _hideBound = false;
+            _selectedObject->updateBoundary();
+        }
+    }
+    else if (_dragged) {
+        _dragged = false;
+        _hideBound = false;
+        if (_selectedObject != nullptr) {
+            _selectedObject->updateBoundary();
+        }
+    }
+    else {
+        _selectedObject = _pressedObject;
+        _hideBound = false;
+        //emit onSelect(_selectedObject);
+    }
+
+    // Reset pressed object
+    _pressedObject = nullptr;
+
+
+    float relX = (float)event->x() / (float)width();
+    float relY = 1 - (float)event->y() / (float)height();
+    // 返回射线的方向和位置
+    Ray ray = camera->generateRay(QVector2D(relX, relY), (float)width() / (float)height());
+    //qDebug() <<"mouseReleaseEvent :ray.direction() " << ray.direction();
+    auto car = hitTest(ray);
+    //if (car != nullptr)qDebug() << car->_shapeType;
+    if (startOperatingObject) {
+
+    }
+        //moveOperatingObject(ray);
+    //qDebug() << ray.direction();
+
 }
 
 // 连续键盘事件
@@ -357,6 +408,32 @@ void my_opengl::keyReleaseEvent(QKeyEvent* event)
         
 }
 
+void my_opengl::setBlinn(bool isTrue)
+{
+    blinn = isTrue;
+}
+
+void my_opengl::choseLight(LIGHTTYPE light)
+{
+    switch (light)
+    {
+    case DIRECTIONLIGHT:
+        m_ambient = QVector3D{ 0.8f, 0.8f, 0.8f };
+        light_local = 4;
+        break;
+    case POINTLIGHT:
+        m_ambient = QVector3D{ 0.2f, 0.2f, 0.2f };
+        light_local = 2;
+        break;
+    case SPOTLIGHT:
+        light_local = 1;
+        m_ambient = QVector3D{ 0.2f, 0.2f, 0.2f };
+        break;
+    default:
+        break;
+    }
+}
+
 
 static void qNormalizeAngle(int& angle)
 {
@@ -368,14 +445,21 @@ static void qNormalizeAngle(int& angle)
 void my_opengl::setXRotation(int angle)
 {
     
-    qNormalizeAngle(angle);
+    //qNormalizeAngle(angle);
     if (angle != m_xRot) {
         m_xRot = angle;
+
+        auto cur_pos = _shapes[idx_model]->position();
+        float temp = (m_last_xRot - angle) * 2.0f * 0.001;
+        _shapes[idx_model]->setPosition(cur_pos - QVector3D{temp, 0.0, 0.0f});
+
         // 这个转的快的原因是 原先m_world.setToIdentity();使其都为1，而现在
         // 相当于每次 新转这个180.0f - (m_xRot/16.0f)角度
         // 因此使用m_last_xRot 记录上下两次Rot的差值记录变化情况
         m_model.rotate((180.0f - ((m_last_xRot-m_xRot)/16.0f)), 1, 0, 0);
         m_last_xRot = angle;
+        _shapes[idx_model]->updateBoundary();
+
         emit xRotationChanged(angle);
         update();
     }
@@ -383,24 +467,33 @@ void my_opengl::setXRotation(int angle)
 
 void my_opengl::setYRotation(int angle)
 {
-    qNormalizeAngle(angle);
+    //qNormalizeAngle(angle);
     if (angle != m_yRot) {
         m_yRot = angle;
-        m_model.rotate( ( m_last_yRot-m_yRot) / 16.0f, 0, 1, 0);
+        //m_model.rotate( ( m_last_yRot-m_yRot) / 16.0f, 0, 1, 0);
+        auto cur_pos = _shapes[idx_model]->position();
+        float temp = (m_last_yRot - angle)*2.0f*0.001;
+        _shapes[idx_model]->setPosition(cur_pos - QVector3D{0.0, temp, 0.0f});
         m_last_yRot = angle;
+        _shapes[idx_model]->updateBoundary();
         emit yRotationChanged(angle);
         update();
     }
 }
 
+
 void my_opengl::setZRotation(int angle)
 {
-    qNormalizeAngle(angle);
+    //qNormalizeAngle(angle);
     if (angle != m_zRot) {
         m_zRot = angle;
+        auto cur_pos = _shapes[idx_model]->position();
+        float temp = (m_last_zRot - angle) * 2.0f * 0.001;
+        _shapes[idx_model]->setPosition(cur_pos - QVector3D{0.0f, 0.0, temp});
 
         m_model.rotate((m_last_zRot -m_zRot) / 16.0f, 0, 0, 1);
         m_last_zRot = angle;
+        _shapes[idx_model]->updateBoundary();
         emit zRotationChanged(angle);
         update();
     }
@@ -460,9 +553,91 @@ void my_opengl::set_specular(int specular)
     update();
 }
 
+
+
 void my_opengl::add_object_cube()
 {
+    makeCurrent();
+    Model* newModel = new Model(base_cube_objpath);
+    GraphicsRenderer* cur_object = new GraphicsRenderer(newModel);
+    cur_object->_shapeType = SHAPETYPE::FULL_RENDER;
+    _shapes.push_back(cur_object);
 
-    qDebug() << "hi";
+    parentWidget()->update();
 }
 
+void my_opengl::add_object_plane()
+{
+    qDebug() << "add plane";
+    if (plane_cnt > 0) {
+        //父窗口指针：nullptr 表示没有父窗口。
+        QMessageBox::warning(nullptr, "警告", "只允许加载一个地板", QMessageBox::Ok);
+
+        return;
+    }
+    makeCurrent();
+    // GraphicsRenderer* 
+    //_objects = new GraphicsRenderer(&cube_model);
+    Model* newModel = new Model(base_plane_objpath);
+    GraphicsRenderer* cur_object = new GraphicsRenderer(newModel);
+    cur_object->_shapeType = SHAPETYPE::FULL_RENDER;
+    _shapes.push_back(cur_object);
+    //parentWidget()->update();
+    plane_cnt++;
+}
+
+void my_opengl::add_object_bigtoy()
+{
+    makeCurrent();
+    Model* newModel = new Model(nanosuit);
+    GraphicsRenderer* cur_object = new GraphicsRenderer(newModel);
+    cur_object->_shapeType = SHAPETYPE::FULL_RENDER;
+    _shapes.push_back(cur_object);
+    parentWidget()->update();
+}
+
+
+void my_opengl::moveOperatingObject(const Ray& ray) {
+    
+    hitTest(ray);
+    if (!_hitRecord.hitted()) {
+        QVector3D target = camera->cameraPos + ray.direction()*10.0f ;
+        //qDebug() << "was not hitted and target is" << target;
+        //target.setZ(0.0f);
+        
+      /*  _shapes[0]->setPosition(target);
+        _shapes[0]->updateBoundary();*/
+    }
+    else {
+        //auto target = _hit_record.position();
+        //// _operatingObject->modelMatrix() QMatrix4x4  glm::mat4
+        //auto temp = QVector4D(QVector3D{ 0.0f, 0.0f, 0.0f }, 1.0);
+        //auto modelMatrix = _operatingObject->modelMatrix();
+        //QVector4D cur = modelMatrix * QVector4D(QVector3D(0.0f, 0.0f, 0.0f), 1.0f);
+        //QVector3D modelCenter{ cur.x(),cur.y(), cur.z() };
+        //QVector4D bottomCenter_temp = modelMatrix * QVector4D(_operatingObject->model()->boundBox().bottomCenterPoint(), 1.0f);   // model center in world space
+        //QVector3D bottomCenter{ bottomCenter_temp.x(), bottomCenter_temp.y(), bottomCenter_temp.z() };
+        //QVector3D newCenter = target + modelCenter - bottomCenter;
+        //_shapes[0]->setPosition(newCenter);
+        //_operatingObject->setPosition(newCenter);
+
+        // Update the boundary
+        //_operatingObject->updateBoundary();
+    }
+    
+
+
+}
+
+void my_opengl::rest_last_xyz()
+{
+    m_last_xRot = 3000;
+    m_last_yRot = 3000;
+    m_last_zRot = 3000;
+    emit rest_last_xyz_signal();
+}
+
+void my_opengl::set_light_roate(QVector3D angle)
+{
+    this->light_angle = angle;
+}

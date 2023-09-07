@@ -52,14 +52,14 @@ bool Boundary::hit(const Ray& ray) const {
 void Boundary::render() const {
     // Generate vertices
     std::vector<Vertex> vertices;
-   vertices.push_back(Vertex(QVector3D(_bottomControlPoint.x(), _bottomControlPoint.y(), _bottomControlPoint.z())));
-   vertices.push_back(Vertex(QVector3D(_topControlPoint.x(), _bottomControlPoint.y(), _bottomControlPoint.z())));
-   vertices.push_back(Vertex(QVector3D(_topControlPoint.x(), _topControlPoint.y(), _bottomControlPoint.z())));
-   vertices.push_back(Vertex(QVector3D(_bottomControlPoint.x(), _topControlPoint.y(), _bottomControlPoint.z())));
-   vertices.push_back(Vertex(QVector3D(_bottomControlPoint.x(), _bottomControlPoint.y(), _topControlPoint.z())));
-   vertices.push_back(Vertex(QVector3D(_topControlPoint.x(), _bottomControlPoint.y(), _topControlPoint.z())));
-   vertices.push_back(Vertex(QVector3D(_topControlPoint.x(), _topControlPoint.y(), _topControlPoint.z())));
-   vertices.push_back(Vertex(QVector3D(_bottomControlPoint.x(), _topControlPoint.y(), _topControlPoint.z())));
+   vertices.push_back(Vertex(QVector3D(_bottomControlPoint.x()*1.05, _bottomControlPoint.y()*1.05, _bottomControlPoint.z()*1.05)));
+   vertices.push_back(Vertex(QVector3D(_topControlPoint.x()*1.05, _bottomControlPoint.y()* 1.05, _bottomControlPoint.z()*1.05)));
+   vertices.push_back(Vertex(QVector3D(_topControlPoint.x() * 1.05, _topControlPoint.y() * 1.05, _bottomControlPoint.z() * 1.05)));
+   vertices.push_back(Vertex(QVector3D(_bottomControlPoint.x() * 1.05, _topControlPoint.y() * 1.05, _bottomControlPoint.z() * 1.05)));
+   vertices.push_back(Vertex(QVector3D(_bottomControlPoint.x() * 1.05, _bottomControlPoint.y() * 1.05, _topControlPoint.z() * 1.05)));
+   vertices.push_back(Vertex(QVector3D(_topControlPoint.x() * 1.05, _bottomControlPoint.y() * 1.05, _topControlPoint.z() * 1.05)));
+   vertices.push_back(Vertex(QVector3D(_topControlPoint.x() * 1.05, _topControlPoint.y() * 1.05, _topControlPoint.z() * 1.05)));
+   vertices.push_back(Vertex(QVector3D(_bottomControlPoint.x() * 1.05, _topControlPoint.y() * 1.05, _topControlPoint.z() * 1.05)));
    
     // Generate indices
     std::vector<unsigned int> indices;
@@ -78,11 +78,12 @@ void Boundary::render() const {
     vao.setVertexAttributePointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     // Draw
     vao.bind();
+    
     OPENGL_EXTRA_FUNCTIONS->glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, (void*)(0 * sizeof(unsigned int)));
     OPENGL_EXTRA_FUNCTIONS->glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, (void*)(4 * sizeof(unsigned int)));
     OPENGL_EXTRA_FUNCTIONS->glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, (void*)(8 * sizeof(unsigned int)));
     OPENGL_EXTRA_FUNCTIONS->glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, (void*)(12 * sizeof(unsigned int)));
-
+    OPENGL_EXTRA_FUNCTIONS->glLineWidth(24.0f);
     vao.unbind();
     // Delete VBO and VAO
     vbo.dispose();

@@ -17,7 +17,7 @@ public:
 
 public:
 	void use();
-
+	void unuse();
 
 	void setMat4(const QString& name, const QMatrix4x4& value);
 

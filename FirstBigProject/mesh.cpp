@@ -27,7 +27,7 @@ void Mesh::render(Shader& shader) const {
         std::string number;
         std::string name = _textures[i].type() == TextureType::DIFFUSE ? "texture_diffuse" : "texture_specular";
         name = "material." + name;
-
+        
         if (_textures[i].type() == TextureType::DIFFUSE)
             number = std::to_string(diffuseNr++);
         else if (_textures[i].type() == TextureType::SPECULAR)

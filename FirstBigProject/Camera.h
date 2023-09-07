@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QWidget>
+#include "ray.h"
+
 
 enum CameraMovement {
 	FORWARD,
@@ -33,7 +35,7 @@ public:
 	void DealKeyInput(CameraMovement direction);
 	void ProcessKeyboard(CameraMovement direction, float deltaTime);
 	void updateCameraVectors();
-	
+	Ray generateRay(QVector2D mouseRelativePosition, float aspectRatio) const;
 
 public:
 	// 摄像机位置
